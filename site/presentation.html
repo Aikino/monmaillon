@@ -1,0 +1,526 @@
+<title>Mon Maillon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Mon Maillon transforme les mails de l'école, les mots du club et les messages des parents en rappels et en tâches partagées entre parents. Ouverture le 12 janvier 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: chain of bands — each section is a "maillon" (link); a dashed thread runs between them. Mobile first, single column, widens to 2 columns on desktop. */
+:root {
+  --nuit: #1B1F3B;      /* brand: bleu nuit */
+  --corail: #E8603C;    /* brand: corail */
+  --eau: #0F6E66;       /* brand: vert d'eau */
+  --bg: #FBF8F5;        /* fond clair chaud, légèrement rosé */
+  --surface: #FFFFFF;
+  --tint: #F3ECE7;
+  --fg: #1B1F3B;
+  --muted: #565A73;
+  --line: #E3DAD3;
+  --accent: #E8603C;
+  --accent-ink: #B9431F; /* corail lisible sur fond clair (AA) */
+  --ok: #0F6E66;
+  --ok-soft: #DDEFEC;
+  --band: #1B1F3B;      /* bandes sombres */
+  --band-fg: #F6F1EC;
+  --band-muted: #B8BAD0;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 14px;
+  --maxw: 1080px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12152A; --surface: #1B1F3B; --tint: #232848; --fg: #F2EEEA; --muted: #A9ACC4;
+  --line: #2E3458; --accent: #F07A58; --accent-ink: #F59377; --ok: #4FB8AC; --ok-soft: #173A3B;
+  --band: #0B0D1C; --band-fg: #F2EEEA; --band-muted: #A9ACC4; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #12152A; --surface: #1B1F3B; --tint: #232848; --fg: #F2EEEA; --muted: #A9ACC4;
+  --line: #2E3458; --accent: #F07A58; --accent-ink: #F59377; --ok: #4FB8AC; --ok-soft: #173A3B;
+  --band: #0B0D1C; --band-fg: #F2EEEA; --band-muted: #A9ACC4; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.7rem); font-weight: 800; }
+h3 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; }
+a { color: var(--accent-ink); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+section { padding-block: clamp(56px, 8vw, 104px); }
+.lede { color: var(--muted); font-size: 1.12rem; max-width: 60ch; }
+.stack { display: grid; gap: 20px; }
+
+/* Preview ribbon */
+.apercu { background: var(--tint); color: var(--muted); font-size: 0.85rem; text-align: center; padding-block: 8px; border-bottom: 1px solid var(--line); }
+
+/* Header */
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: var(--fg); text-decoration: none; letter-spacing: -0.02em; }
+.logo svg { width: 38px; height: 22px; flex: none; }
+.top-cta { font-weight: 600; font-size: 0.95rem; color: var(--fg); text-decoration: none; border: 1.5px solid var(--line); padding: 8px 14px; border-radius: 999px; white-space: nowrap; }
+.top-cta:hover { border-color: var(--accent); }
+
+/* Hero */
+.hero { padding-block: clamp(28px, 5vw, 64px) clamp(56px, 7vw, 96px); }
+.hero .wrap { display: grid; gap: 40px; align-items: start; }
+.kicker { font-size: 1.05rem; color: var(--muted); font-style: italic; max-width: 46ch; }
+.hero h1 { font-size: clamp(2.4rem, 1.4rem + 4.6vw, 4.4rem); font-weight: 800; margin-block: 14px 18px; }
+.hero h1 em { font-style: normal; color: var(--accent-ink); }
+.hero .lede strong { color: var(--fg); }
+
+/* Form */
+.form-card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 3vw, 28px); box-shadow: 0 18px 40px -24px rgba(27,31,59,.35); }
+form.inscription { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; font-size: 0.92rem; }
+.field input { font: inherit; font-size: 1rem; padding: 12px 14px; min-height: 48px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--bg); color: var(--fg); width: 100%; }
+.field input:focus { border-color: var(--eau); outline: none; box-shadow: 0 0 0 3px var(--ok-soft); }
+.row2 { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.93rem; line-height: 1.45; }
+.check input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--eau); flex: none; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.btn { font: inherit; font-weight: 700; font-size: 1.05rem; min-height: 52px; border: 0; border-radius: 12px; background: var(--corail); color: #fff; cursor: pointer; padding: 0 22px; transition: transform .15s ease, background .15s ease; }
+.btn:hover { background: #D4502D; }
+.btn:active { transform: translateY(1px); }
+.sous-bouton { font-size: 0.85rem; color: var(--muted); text-align: center; }
+.err { color: #C0392B; font-size: 0.85rem; min-height: 0; }
+:root[data-theme="dark"] .err { color: #FF8A7A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .err { color: #FF8A7A; } }
+.msg { border-radius: 12px; padding: 14px 16px; font-size: 0.95rem; background: var(--ok-soft); color: var(--fg); border: 1px solid var(--ok); }
+
+/* Demo */
+.demo .wrap { display: grid; gap: 36px; }
+.demo-stage { display: grid; gap: 22px; align-items: center; }
+.capture { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; font-size: 0.9rem; box-shadow: 0 14px 34px -24px rgba(27,31,59,.4); max-width: 440px; width: 100%; justify-self: center; }
+.capture .mail-head { display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 10px; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; flex: none; }
+.capture .from { font-weight: 700; }
+.capture .meta { color: var(--muted); font-size: 0.8rem; }
+.capture p { color: var(--muted); line-height: 1.55; }
+.capture mark { background: color-mix(in srgb, var(--corail) 22%, transparent); color: var(--fg); border-radius: 3px; padding: 0 2px; }
+.arrow { justify-self: center; color: var(--accent); font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+.arrow svg { width: 22px; height: 22px; transform: rotate(90deg); }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.card { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.card .ic { font-size: 1.3rem; text-align: center; }
+.card .t { font-weight: 600; min-width: 0; }
+.card .w { color: var(--muted); font-size: 0.88rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.qui { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-weight: 600; margin-top: 6px; }
+.chip { border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 0.9rem; background: var(--surface); }
+.chip.on { border-color: var(--ok); background: var(--ok-soft); }
+@media (prefers-reduced-motion: no-preference) {
+  .demo.play .card { animation: pop .5s cubic-bezier(.2,.8,.2,1.2) both; }
+  .demo.play .card:nth-child(1) { animation-delay: .2s; }
+  .demo.play .card:nth-child(2) { animation-delay: .55s; }
+  .demo.play .card:nth-child(3) { animation-delay: .9s; }
+  .demo.play .card:nth-child(4) { animation-delay: 1.25s; }
+  .demo.play .card:nth-child(5) { animation-delay: 1.6s; }
+  .demo.play .capture mark { animation: hl 1.8s ease both; }
+  @keyframes pop { from { transform: translateY(10px) scale(.97); } to { transform: none; } }
+  @keyframes hl { 0% { background: transparent; } 100% { background: color-mix(in srgb, var(--corail) 22%, transparent); } }
+}
+.replay { font: inherit; font-size: 0.88rem; color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; justify-self: start; padding: 6px 0; }
+
+/* Comparatif */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+table.cmp { width: 100%; border-collapse: collapse; min-width: 520px; background: var(--surface); }
+.cmp th, .cmp td { padding: 16px 18px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.cmp tr:last-child td { border-bottom: 0; }
+.cmp thead th { font-family: var(--font-display); font-size: 1.05rem; }
+.cmp th:first-child, .cmp td:first-child { color: var(--muted); width: 50%; }
+.cmp thead th:last-child { color: var(--ok); }
+.cmp td:last-child { font-weight: 600; background: color-mix(in srgb, var(--ok-soft) 55%, transparent); }
+
+/* Charge band */
+.band { background: var(--band); color: var(--band-fg); }
+.band .lede { color: var(--band-muted); }
+.charge .wrap { display: grid; gap: 28px; }
+.charge h2 { font-size: clamp(2.2rem, 1.3rem + 4vw, 4rem); }
+.charge h2 span { color: var(--corail); }
+.charge .quote { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; }
+
+/* Fonctions */
+.fonctions ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.fonctions li { display: grid; gap: 8px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.fonctions li p { color: var(--muted); }
+.fonctions .n { font-family: var(--font-display); font-weight: 800; font-size: 0.9rem; color: var(--eau); letter-spacing: 0.06em; }
+
+/* Deux maisons */
+.maisons .box { display: grid; gap: 14px; border: 2px dashed var(--line); border-radius: 20px; padding: clamp(22px, 4vw, 40px); }
+.badge { justify-self: start; background: var(--ok-soft); color: var(--ok); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+.small { font-size: 0.92rem; color: var(--muted); }
+
+/* Fondateur */
+.fondateur .wrap { display: grid; gap: 28px; align-items: center; }
+.photo { aspect-ratio: 4 / 5; max-width: 280px; width: 100%; border-radius: 20px; background: var(--tint); border: 2px dashed var(--line); display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 0.85rem; padding: 16px; }
+.todo { background: color-mix(in srgb, var(--corail) 12%, transparent); border-left: 3px solid var(--corail); padding: 2px 6px; border-radius: 4px; }
+.fondateur blockquote { margin: 0; font-size: 1.12rem; display: grid; gap: 12px; max-width: 60ch; }
+.signature { font-family: var(--font-display); font-weight: 700; }
+
+/* Vie privée */
+.prive ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.prive li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+.prive li span:first-child { font-size: 1.35rem; line-height: 1.3; }
+
+/* Tarifs */
+.plans { display: grid; gap: 16px; }
+.plan { display: grid; gap: 10px; align-content: start; padding: 24px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); position: relative; }
+.plan .prix { font-family: var(--font-display); font-weight: 800; font-size: 2rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.plan .prix small { font-size: 1rem; font-weight: 600; color: var(--muted); }
+.plan s { color: var(--muted); font-weight: 500; font-size: 1.2rem; margin-right: 6px; }
+.plan p { color: var(--muted); }
+.plan.star { border: 2px solid var(--corail); box-shadow: 0 18px 40px -26px rgba(232,96,60,.6); }
+.plan.star .badge { background: var(--corail); color: #fff; position: absolute; top: -12px; left: 22px; }
+.mention { font-size: 0.88rem; color: var(--muted); }
+
+/* FAQ */
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 36px 18px 0; font-weight: 700; font-size: 1.05rem; position: relative; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font-size: 1.5rem; color: var(--accent); font-weight: 400; transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { padding-bottom: 18px; color: var(--muted); max-width: 65ch; }
+
+/* Final CTA */
+.final .wrap { display: grid; gap: 32px; align-items: start; }
+.final .form-card { color: var(--fg); }
+
+footer { padding-block: 32px; font-size: 0.9rem; color: var(--muted); border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+footer a { color: var(--muted); }
+
+/* Chain thread: the "maillon" motif between sections */
+.thread { display: flex; justify-content: center; padding: 0; height: 0; position: relative; }
+.thread svg { position: absolute; top: -20px; width: 56px; height: 40px; }
+
+@media (min-width: 760px) {
+  .row2 { grid-template-columns: 1fr 1fr; }
+  .hero .wrap { grid-template-columns: 1.15fr 1fr; gap: 56px; }
+  .demo-stage { grid-template-columns: 1fr auto 1fr; }
+  .arrow svg { transform: none; }
+  .arrow { flex-direction: column; }
+  .fonctions ol { grid-template-columns: repeat(3, 1fr); }
+  .plans { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+  .fondateur .wrap { grid-template-columns: 280px 1fr; gap: 48px; }
+  .final .wrap { grid-template-columns: 1fr 1fr; gap: 56px; }
+  .charge .wrap { grid-template-columns: 1.2fr 1fr; align-items: end; gap: 48px; }
+}
+</style>
+
+<div class="apercu" id="apercu">Aperçu du site · le formulaire n'envoie rien pour l'instant</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#haut" aria-label="Mon Maillon, accueil">
+      <svg viewBox="0 0 38 22" aria-hidden="true"><rect x="2" y="3" width="20" height="16" rx="8" fill="none" stroke="#E8603C" stroke-width="3.2"/><rect x="16" y="3" width="20" height="16" rx="8" fill="none" stroke="#0F6E66" stroke-width="3.2"/></svg>
+      Mon Maillon
+    </a>
+    <a class="top-cta" href="#reserver">Je réserve ma place</a>
+  </div>
+</header>
+
+<main id="haut">
+  <!-- 1. HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="kicker">Il est 22 h. Tu repenses au mot de l'école, au maillot de foot, au cadeau pour l'anniversaire de samedi…</p>
+        <h1>Et si quelqu'un d'autre y pensait <em>à ta place</em> ?</h1>
+        <p class="lede">Mon Maillon lit les mails de l'école, les mots du club et les messages des parents, et transforme chaque info en actions partagées entre vous deux. <strong>Tu valides. C'est géré.</strong></p>
+      </div>
+      <div class="form-card" id="reserver">
+        <form class="inscription" id="form1" novalidate>
+          <div class="row2">
+            <div class="field"><label for="prenom1">Prénom</label><input id="prenom1" name="prenom" autocomplete="given-name" required><span class="err" data-for="prenom"></span></div>
+            <div class="field"><label for="cp1">Code postal</label><input id="cp1" name="cp" inputmode="numeric" autocomplete="postal-code" maxlength="5" required><span class="err" data-for="cp"></span></div>
+          </div>
+          <div class="field"><label for="email1">E-mail</label><input id="email1" name="email" type="email" autocomplete="email" required><span class="err" data-for="email"></span></div>
+          <label class="check" for="maisons1"><input type="checkbox" id="maisons1" name="maisons">Nos enfants vivent entre deux maisons</label>
+          <label class="check" for="rgpd1"><input type="checkbox" id="rgpd1" name="rgpd" required><span>J'accepte la <a href="#vie-privee">politique de confidentialité</a>.</span></label>
+          <span class="err" data-for="rgpd"></span>
+          <div class="hp" aria-hidden="true"><label for="site1">Site</label><input id="site1" name="site" tabindex="-1" autocomplete="off"></div>
+          <button class="btn" type="submit">Je réserve ma place</button>
+          <p class="sous-bouton">Gratuit · Ouverture le 12 janvier 2027 · Prix fondateur pour les 500 premières familles</p>
+          <p class="sous-bouton compteur" hidden></p>
+          <div class="msg" role="status" hidden></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="thread" aria-hidden="true"><svg viewBox="0 0 56 40"><rect x="6" y="8" width="26" height="24" rx="12" fill="none" stroke="var(--line)" stroke-width="3"/><rect x="24" y="8" width="26" height="24" rx="12" fill="none" stroke="var(--line)" stroke-width="3"/></svg></div>
+
+  <!-- 2. DÉMO -->
+  <section class="demo" id="demo">
+    <div class="wrap">
+      <div class="stack">
+        <h2>Un mail de l'école. Cinq choses en moins à penser.</h2>
+        <p class="lede">Tu envoies la capture. Mon Maillon trouve tout, et demande qui s'en occupe.</p>
+      </div>
+      <div class="demo-stage">
+        <div class="capture" aria-label="Exemple de mail de l'école">
+          <div class="mail-head">
+            <div class="avatar" aria-hidden="true">3B</div>
+            <div><div class="from">Mme Lambert · 3e primaire</div><div class="meta">Objet : Sortie au musée</div></div>
+          </div>
+          <p>Chers parents, la classe se rend au musée <mark>jeudi. Rendez-vous à 8 h 30</mark> devant l'école. Prévoir un <mark>pique-nique et une gourde</mark>. Merci de verser <mark>6 € avant lundi</mark> et de rendre <mark>l'autorisation signée</mark>. Bonne soirée !</p>
+        </div>
+        <div class="arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </div>
+        <div class="stack" style="gap:10px">
+          <ul class="cards">
+            <li class="card"><span class="ic" aria-hidden="true">📅</span><span class="t">Excursion au musée</span><span class="w">jeudi, 8 h 30</span></li>
+            <li class="card"><span class="ic" aria-hidden="true">🎒</span><span class="t">Pique-nique et gourde</span><span class="w">jeudi</span></li>
+            <li class="card"><span class="ic" aria-hidden="true">💶</span><span class="t">6 € à payer</span><span class="w">avant lundi</span></li>
+            <li class="card"><span class="ic" aria-hidden="true">✍️</span><span class="t">Autorisation à signer</span><span class="w">avant lundi</span></li>
+            <li class="card"><span class="ic" aria-hidden="true">⏰</span><span class="t">Rappel la veille</span><span class="w">mercredi, 19 h</span></li>
+          </ul>
+          <div class="qui">Qui s'en occupe ? <button type="button" class="chip on" aria-pressed="true">👤 Toi</button><button type="button" class="chip" aria-pressed="false">👤 L'autre parent</button></div>
+          <button type="button" class="replay" id="replay">Revoir l'animation</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. COMPARATIF -->
+  <section class="comparatif">
+    <div class="wrap stack" style="gap:28px">
+      <h2>Un agenda range. Mon Maillon anticipe.</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th scope="col">Un agenda</th><th scope="col">Mon Maillon</th></tr></thead>
+          <tbody>
+            <tr><td>Tu dois tout encoder</td><td>Tu envoies une capture, c'est encodé</td></tr>
+            <tr><td>Tu te souviens seul·e</td><td>On te rappelle la veille</td></tr>
+            <tr><td>C'est « ton » agenda</td><td>Les tâches sont réparties</td></tr>
+            <tr><td>Tu découvres trop tard que les inscriptions sont pleines</td><td>On te prévient quand elles ouvrent</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PARTAGE DE LA CHARGE -->
+  <section class="band charge">
+    <div class="wrap">
+      <h2>Fini le <span>parent-agenda</span>.</h2>
+      <div class="stack">
+        <p class="lede">Celui qui pense à tout, tout le temps. Avec Mon Maillon, chaque tâche a un nom. L'autre parent reçoit la sienne.</p>
+        <p class="quote">Personne n'a plus à demander « tu y as pensé ? ».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. FONCTIONS -->
+  <section class="fonctions">
+    <div class="wrap stack" style="gap:28px">
+      <h2>Ce que fait Mon Maillon</h2>
+      <ol>
+        <li><span class="n">ACTIVITÉS</span><h3>Les activités des enfants</h3><p>Horaires, qui dépose, qui reprend, et une alerte quand les réinscriptions ouvrent.</p></li>
+        <li><span class="n">CAPTURES</span><h3>Tes captures et mails deviennent des actions</h3><p>Envoie une capture ou transfère un mail : l'IA propose, tu valides.</p></li>
+        <li><span class="n">REPAS</span><h3>Les repas de la semaine</h3><p>7 idées adaptées à vos soirs chargés, et la liste de courses qui va avec.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. DEUX MAISONS -->
+  <section class="maisons" style="padding-top:0">
+    <div class="wrap">
+      <div class="box">
+        <span class="badge">Bientôt</span>
+        <h2>Deux maisons, une seule organisation.</h2>
+        <p class="lede">Le calendrier de garde, les mêmes infos de l'école pour les deux parents, les affaires qui changent de maison, les frais partagés.</p>
+        <p class="small">Vous êtes concernés ? Coche la case « deux maisons » en t'inscrivant : tu seras parmi les premiers à l'essayer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FONDATEUR -->
+  <section class="fondateur" style="background:var(--tint)">
+    <div class="wrap">
+      <div class="photo">Photo réelle d'Hervé<br>(à ajouter)</div>
+      <div class="stack">
+        <h2>Pourquoi Mon Maillon</h2>
+        <blockquote>
+          <p>Je m'appelle Hervé, je vis à <span class="todo">[ville]</span>, je suis papa de <span class="todo">[enfants]</span>.</p>
+          <p>Un soir de <span class="todo">[mois]</span>, <span class="todo">[le moment concret : l'oubli, la course, ce qui a débordé]</span>.</p>
+          <p>J'ai compris que le problème n'était pas de ranger les infos, mais d'y <strong>penser</strong>.</p>
+          <p>Mon Maillon, c'est l'outil que j'aurais voulu avoir ce soir-là.</p>
+          <p class="signature">Hervé, fondateur de Mon Maillon</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. VIE PRIVÉE -->
+  <section class="prive" id="vie-privee">
+    <div class="wrap stack" style="gap:28px">
+      <h2>Tes données, nos engagements</h2>
+      <ul>
+        <li><span aria-hidden="true">🇪🇺</span><span><strong>Hébergé en Europe.</strong></span></li>
+        <li><span aria-hidden="true">🗑️</span><span><strong>Tes captures sont supprimées juste après lecture.</strong> On ne garde que l'événement.</span></li>
+        <li><span aria-hidden="true">🔒</span><span><strong>L'IA ne garde rien et n'apprend pas de tes données.</strong></span></li>
+        <li><span aria-hidden="true">🚫</span><span><strong>Pas de pub. Jamais de revente.</strong> Tu supprimes tout en un clic.</span></li>
+      </ul>
+      <p class="small">La politique de confidentialité complète sera publiée avant l'ouverture.</p>
+    </div>
+  </section>
+
+  <!-- 9. TARIFS -->
+  <section class="tarifs" style="background:var(--tint)">
+    <div class="wrap stack" style="gap:32px">
+      <h2>Un prix simple, par famille</h2>
+      <div class="plans">
+        <div class="plan"><h3>Découverte</h3><div class="prix">0 €</div><p>Pour essayer.</p></div>
+        <div class="plan star"><span class="badge">500 places</span><h3>Famille fondatrice</h3><div class="prix"><s>4 €</s>2,50 € <small>/mois, à vie</small></div><p>Réservé aux 500 premières familles de la liste d'attente.</p></div>
+        <div class="plan"><h3>Famille</h3><div class="prix">4 € <small>/mois</small></div><p>ou 40 €/an. 1 mois d'essai, sans carte bancaire.</p></div>
+      </div>
+      <p class="mention">Prix TVA comprise. Sans engagement.</p>
+    </div>
+  </section>
+
+  <!-- 10. FAQ -->
+  <section class="faq">
+    <div class="wrap stack" style="gap:20px; max-width: 820px">
+      <h2>Questions fréquentes</h2>
+      <div>
+        <details><summary>Ça marche avec n'importe quelle école ?</summary><p>Oui. On lit le mail, la photo du mot ou la capture d'écran, peu importe la plateforme utilisée par l'école ou le club.</p></details>
+        <details><summary>Mon ou ma partenaire doit-il·elle s'inscrire aussi ?</summary><p>C'est mieux, c'est tout le principe ! Mais tu peux commencer seul·e et l'inviter ensuite en un clic.</p></details>
+        <details><summary>iPhone ou Android ?</summary><p>Les deux. L'appli s'installe depuis le navigateur, sans passer par un store. Une version App Store suivra.</p></details>
+        <details><summary>Et si l'IA se trompe ?</summary><p>Rien ne s'ajoute sans ta validation. Tu corriges en un geste.</p></details>
+        <details><summary>Que deviennent mes données ?</summary><p>Elles sont hébergées en Europe, les captures sont supprimées après lecture, et il n'y a ni pub ni revente. Tous les détails sont dans la politique de confidentialité.</p></details>
+        <details><summary>Je peux arrêter quand je veux ?</summary><p>Oui, en un clic, sans engagement.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. DERNIER APPEL -->
+  <section class="band final">
+    <div class="wrap">
+      <div class="stack">
+        <h2>Moins de choses à penser, dès le 12 janvier.</h2>
+        <p class="lede">Réserve ta place et profite du prix fondateur.</p>
+      </div>
+      <div class="form-card">
+        <form class="inscription" id="form2" novalidate>
+          <div class="row2">
+            <div class="field"><label for="prenom2">Prénom</label><input id="prenom2" name="prenom" autocomplete="given-name" required><span class="err" data-for="prenom"></span></div>
+            <div class="field"><label for="cp2">Code postal</label><input id="cp2" name="cp" inputmode="numeric" autocomplete="postal-code" maxlength="5" required><span class="err" data-for="cp"></span></div>
+          </div>
+          <div class="field"><label for="email2">E-mail</label><input id="email2" name="email" type="email" autocomplete="email" required><span class="err" data-for="email"></span></div>
+          <label class="check" for="maisons2"><input type="checkbox" id="maisons2" name="maisons">Nos enfants vivent entre deux maisons</label>
+          <label class="check" for="rgpd2"><input type="checkbox" id="rgpd2" name="rgpd" required><span>J'accepte la <a href="#vie-privee">politique de confidentialité</a>.</span></label>
+          <span class="err" data-for="rgpd"></span>
+          <div class="hp" aria-hidden="true"><label for="site2">Site</label><input id="site2" name="site" tabindex="-1" autocomplete="off"></div>
+          <button class="btn" type="submit">Je réserve ma place</button>
+          <p class="sous-bouton">Gratuit · Ouverture le 12 janvier 2027 · Prix fondateur pour les 500 premières familles</p>
+          <div class="msg" role="status" hidden></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Mon Maillon · Fait avec ❤️ en Wallonie.</span>
+    <nav aria-label="Liens légaux">
+      <span>Mentions légales (bientôt)</span>
+      <a href="#vie-privee">Confidentialité</a>
+      <span>Contact : <span style="user-select:all">bonjour@monmaillon.be</span></span>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var MSG = {
+    manquant: "Ce champ est nécessaire.",
+    email: "Cet e-mail ne semble pas valide.",
+    rgpd: "Coche la case pour accepter la politique de confidentialité.",
+    cp: "Indique un code postal belge (4 chiffres) ou français (5 chiffres).",
+    chargement: "Un instant…",
+    apercu: "Merci {prenom} ! Ceci est un aperçu : ton inscription n'a pas été envoyée. La liste d'attente ouvrira bientôt.",
+    succes: "C'est presque fini ! Vérifie ta boîte mail pour confirmer ta place. (Pense à regarder dans les spams ou l'onglet Promotions.)",
+    deja: "Tu es déjà sur la liste 🎉 On t'a renvoyé le lien de confirmation si besoin.",
+    trop: "Trop de tentatives d'un coup. Réessaie dans une heure.",
+    serveur: "Oups, un souci de notre côté. Réessaie dans un instant ou écris-nous à bonjour@monmaillon.be."
+  };
+  // Défini par build.sh dans index.html ; absent dans l'aperçu publié → mode démonstration
+  var ENDPOINT = window.WAITLIST_ENDPOINT || "";
+  var REF = "";
+  try { REF = (new URLSearchParams(location.search).get("ref") || "").slice(0, 8); } catch (e) {}
+  if (ENDPOINT) { var rb = document.getElementById("apercu"); if (rb) rb.hidden = true; }
+  document.querySelectorAll("form.inscription").forEach(function (f) {
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var ok = true;
+      function err(name, text) { var s = f.querySelector('.err[data-for="' + name + '"]'); if (s) s.textContent = text || ""; if (text) ok = false; }
+      var prenom = f.prenom.value.trim(), email = f.email.value.trim(), cp = f.cp.value.trim();
+      err("prenom", prenom ? "" : MSG.manquant);
+      err("email", !email ? MSG.manquant : (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? "" : MSG.email));
+      err("cp", !cp ? MSG.manquant : (/^\d{4,5}$/.test(cp) ? "" : MSG.cp));
+      err("rgpd", f.rgpd.checked ? "" : MSG.rgpd);
+      if (!ok) { var first = f.querySelector('.err:not(:empty)'); if (first) { var i = first.parentElement.querySelector("input"); if (i) i.focus(); } return; }
+      var btn = f.querySelector(".btn"), msg = f.querySelector(".msg");
+      btn.disabled = true; btn.textContent = MSG.chargement; msg.hidden = true;
+      function done(text) {
+        btn.disabled = false; btn.textContent = "Je réserve ma place";
+        msg.textContent = text; msg.hidden = false;
+      }
+      if (!ENDPOINT) { setTimeout(function () { done(MSG.apercu.replace("{prenom}", prenom)); }, 600); return; }
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prenom: prenom, email: email, cp: cp, maisons: f.maisons.checked, rgpd: f.rgpd.checked, site: f.site.value, ref: REF })
+      }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { code: r.status, j: j }; }); })
+        .then(function (res) {
+          var s = res.j.status;
+          if (s === "ok") { done(MSG.succes); f.reset(); }
+          else if (s === "already") done(MSG.deja);
+          else if (s === "rate_limited") done(MSG.trop);
+          else if (s === "invalid" && res.j.errors) {
+            done(""); msg.hidden = true;
+            var e = res.j.errors;
+            if (e.email) err("email", e.email === "invalid" ? MSG.email : MSG.manquant);
+            if (e.prenom) err("prenom", MSG.manquant);
+            if (e.cp) err("cp", e.cp === "invalid" ? MSG.cp : MSG.manquant);
+            if (e.rgpd) err("rgpd", MSG.rgpd);
+          }
+          else done(MSG.serveur);
+        })
+        .catch(function () { done(MSG.serveur); });
+    });
+  });
+
+  // Compteur réel, affiché seulement à partir de 100 familles confirmées
+  if (ENDPOINT) {
+    fetch("/api/stats").then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.confirmes >= 100) document.querySelectorAll(".compteur").forEach(function (c) {
+        c.textContent = "Déjà " + j.confirmes.toLocaleString("fr-BE") + " familles inscrites"; c.hidden = false;
+      });
+    }).catch(function () {});
+  }
+
+  // Démo : rejouer l'animation des 5 cartes
+  var demo = document.getElementById("demo");
+  function play() { demo.classList.remove("play"); void demo.offsetWidth; demo.classList.add("play"); }
+  document.getElementById("replay").addEventListener("click", play);
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { play(); io.disconnect(); } }, { threshold: 0.35 });
+    io.observe(demo);
+  }
+
+  // Qui s'en occupe ? (bascule)
+  var chips = document.querySelectorAll(".qui .chip");
+  chips.forEach(function (c) { c.addEventListener("click", function () {
+    chips.forEach(function (x) { x.classList.remove("on"); x.setAttribute("aria-pressed", "false"); });
+    c.classList.add("on"); c.setAttribute("aria-pressed", "true");
+  }); });
+})();
+</script>

@@ -1,0 +1,10 @@
+# Données personnelles et secrets : jamais dans Git
+waitlist/waitlist.db*
+waitlist/outbox/
+waitlist/.ip_salt
+waitlist/server.log
+.env
+# Fichiers générés
+site/index.html
+node_modules/
+__pycache__/
